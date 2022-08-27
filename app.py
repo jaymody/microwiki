@@ -14,11 +14,18 @@ def get_text_from_wikiepedia_article(url):
     return text
 
 
-def main():
-    summarizer = pipeline("summarization", model="t5-small")
-    text = get_text_from_wikiepedia_article("https://en.wikipedia.org/wiki/Lorem_ipsum")
-    print(text)
+def summarize(text):
+    summarizer = pipeline(
+        "summarization", model="t5-small", clean_up_tokenization_spaces=True
+    )
     summary = summarizer(text)[0]["summary_text"]
+    return summary
+
+
+def main():
+    text = get_text_from_wikiepedia_article("https://en.wikipedia.org/wiki/Lorem_ipsum")
+    summary = summarize(text)
+    print(text)
     print("-------------------------")
     print(summary)
 
