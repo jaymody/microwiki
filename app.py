@@ -1,14 +1,27 @@
+import re
+
+import requests
+from bs4 import BeautifulSoup
 from transformers import pipeline
 
-text_to_summarize = """
-In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available. It is also used to temporarily replace text in a process called greeking, which allows designers to consider the form of a webpage or publication, without the meaning of the text influencing the design.
 
-Lorem ipsum is typically a corrupted version of De finibus bonorum et malorum, a 1st-century BC text by the Roman statesman and philosopher Cicero, with words altered, added, and removed to make it nonsensical and improper Latin.
+def get_text_from_wikiepedia_article(url):
+    soup = BeautifulSoup(requests.get(url).text, "html.parser")
+    text = soup.find("div", {"id": "mw-content-text"}).text  # get body content text
+    text = re.sub(r"\[\d+\]", "", text)  # remove all references
+    text = text.split("\n\n")[0]  # keep only the first section of the wikipedia article
+    text = text.strip()  # remove leading and trailing whitespaces
+    return text
 
-Versions of the Lorem ipsum text have been used in typesetting at least since the 1960s, when it was popularized by advertisements for Letraset transfer sheets. Lorem ipsum was introduced to the digital world in the mid-1980s, when Aldus employed it in graphic and word-processing templates for its desktop publishing program PageMaker. Other popular word processors, including Pages and Microsoft Word, have since adopted Lorem ipsum, as have many LaTeX packages, web content managers such as Joomla! and WordPress, and CSS libraries such as Semantic UI.
-"""
 
-summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
-summary = summarizer(text_to_summarize)[0]["summary_text"]
+def main():
+    summarizer = pipeline("summarization", model="t5-small")
+    text = get_text_from_wikiepedia_article("https://en.wikipedia.org/wiki/Lorem_ipsum")
+    print(text)
+    summary = summarizer(text)[0]["summary_text"]
+    print("-------------------------")
+    print(summary)
 
-print(summary)
+
+if __name__ == "__main__":
+    main()

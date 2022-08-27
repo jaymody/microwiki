@@ -8,6 +8,8 @@ authors = ["jaymody <jaykmody@gmail.com>"]
 python = "^3.9"
 transformers = "^4.21.2"
 torch = "^1.12.1"
+beautifulsoup4 = "^4.11.1"
+requests = "^2.28.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
