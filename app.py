@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from transformers import pipeline
 
 
-def get_text_from_wikiepedia_article(url):
+def get_text_from_wikipedia_article(url):
     soup = BeautifulSoup(requests.get(url).text, "html.parser")
     text = soup.find("div", {"id": "mw-content-text"}).text  # get body content text
     text = re.sub(r"\[\d+\]", "", text)  # remove all references
@@ -23,7 +23,7 @@ def summarize(text):
 
 
 def main():
-    text = get_text_from_wikiepedia_article("https://en.wikipedia.org/wiki/Lorem_ipsum")
+    text = get_text_from_wikipedia_article("https://en.wikipedia.org/wiki/Lorem_ipsum")
     summary = summarize(text)
     print(text)
     print("-------------------------")
