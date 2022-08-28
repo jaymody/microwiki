@@ -2,11 +2,15 @@ import re
 
 import requests
 from bs4 import BeautifulSoup
+from fastapi import FastAPI
 from transformers import pipeline
+
+app = FastAPI(title="Wikipedia page summarizer.")
 
 
 def get_text_from_wikipedia_article(url):
-    soup = BeautifulSoup(requests.get(url).text, "html.parser")
+    html = requests.get(url, timeout=10).text
+    soup = BeautifulSoup(html, "html.parser")
     text = soup.find("div", {"id": "mw-content-text"}).text  # get body content text
     text = re.sub(r"\[\d+\]", "", text)  # remove all references
     text = text.split("\n\n")[0]  # keep only the first section of the wikipedia article
@@ -22,13 +26,11 @@ def summarize(text):
     return summary
 
 
-def main():
-    text = get_text_from_wikipedia_article("https://en.wikipedia.org/wiki/Lorem_ipsum")
+@app.get("/summarize")
+def summarize_wikipedia_page(url: str):
+    text = get_text_from_wikipedia_article(url)
     summary = summarize(text)
     print(text)
     print("-------------------------")
     print(summary)
-
-
-if __name__ == "__main__":
-    main()
+    return {"summary": summary}
