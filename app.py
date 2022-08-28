@@ -20,7 +20,7 @@ def get_text_from_wikipedia_article(url):
 
 def summarize(text):
     summarizer = pipeline(
-        "summarization", model="t5-small", clean_up_tokenization_spaces=True
+        "summarization", model="model/", clean_up_tokenization_spaces=True
     )
     summary = summarizer(text)[0]["summary_text"]
     return summary
